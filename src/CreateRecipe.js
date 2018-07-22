@@ -12,7 +12,7 @@ class CreateRecipe extends Component {
   render () {
     return (
       <Row style={{minHeight: '100vh'}}>
-        <Col md='12' lg={{size: 8, offset: 2}}>
+        <Col md='12' lg={{size: 6, offset: 3}}>
 
           <div style={{margin: '24px 0'}}>
             <h1>Create a recipe</h1>
@@ -24,15 +24,21 @@ class CreateRecipe extends Component {
               <Form>
                 <FormGroup>
                   <Label for='recipeTitle'>Title</Label>
-                  <Input placeholder="Your recipe's title" />
+                  <Input id='recipeTitle' placeholder="Your recipe's title" />
                 </FormGroup>
+                <Row>
+                  <FormGroup className='col-6'>
+                    <Label for='servings'>Serves</Label>
+                    <Input id='servings' placeholder='No. of servings' />
+                  </FormGroup>
+                  <FormGroup className='col-6'>
+                    <Label for='timeNeeded'>Time needed</Label>
+                    <Input id='timeNeeded' />
+                  </FormGroup>
+                </Row>
                 <FormGroup>
-                  <Label for='servings'>Serves</Label>
-                  <Input placeholder='Number of servings' />
-                </FormGroup>
-                <FormGroup>
-                  <Label for='time'>Time</Label>
-                  <Input />
+                  <Label for='coverPhoto'>Upload a cover photo</Label>
+                  <Input id='coverPhoto' type='file' />
                 </FormGroup>
               </Form>
             </Col>

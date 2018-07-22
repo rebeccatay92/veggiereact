@@ -5,22 +5,37 @@ import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button } from '
 class RecipeList extends Component {
   constructor (props) {
     super(props)
-    //
+    this.state = {
+      isLoading: true,
+      recipes: []
+    }
   }
 
   componentDidMount () {
-    // fetch data from backend
+    window.fetch('http://localhost:3001/recipes')
+      .then(res => {
+        return res.json()
+      })
+      .then(recipes => {
+        this.setState({
+          isLoading: false,
+          recipes: recipes
+        })
+      })
   }
 
-  redirectToRecipe () {
-    console.log('props', this.props.history.push('/recipes/1'))
+  redirectToRecipe (id) {
+    this.props.history.push(`/recipes/${id}`)
   }
 
   render () {
+    let { isLoading, recipes } = this.state
+
+    if (isLoading) return <h1>Loading...</h1>
+
     return (
       <Row style={{minHeight: '100vh'}}>
-        <Col md='12' lg={{size: 8, offset: 2}}>
-
+        <Col md='12'>
           <div style={{margin: '24px 0'}}>
             <h1>Your recipes</h1>
             <h4>Discover new and exciting flavors</h4>
@@ -30,15 +45,18 @@ class RecipeList extends Component {
           </Link>
 
           <Row>
-            <Col sm='12' md='6'>
-              <Card style={{marginBottom: '16px', cursor: 'pointer'}} onClick={() => this.redirectToRecipe()}>
-                <CardImg top src='http://via.placeholder.com/450x250' width='100%' alt='cardimg' />
-                <CardBody>
-                  <CardTitle>Recipe title</CardTitle>
-                  <CardText>By xyz</CardText>
-                </CardBody>
-              </Card>
-            </Col>
+            {recipes.map((recipe, i) => {
+              return (
+                <Col sm='12' md='6' key={i}>
+                  <div style={{borderRadius: '5px', boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '350px', marginBottom: '24px', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)}>
+                    <img className='img-fluid' src={recipe.coverPhotoUrl} alt='recipe photo' style={{width: '100%', height: '80%', maxHeight: '80%', objectFit: 'cover'}} />
+                    <div style={{width: '100%', height: '20%', maxHeight: '20%'}}>
+                      <h5>{recipe.title}</h5>
+                    </div>
+                  </div>
+                </Col>
+              )
+            })}
           </Row>
         </Col>
       </Row>

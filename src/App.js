@@ -4,12 +4,13 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
 import { Container, Row, Col, Jumbotron, Button, Navbar } from 'reactstrap'
 import RecipeList from './RecipeList.js'
 import CreateRecipe from './CreateRecipe.js'
+import RecipePage from './RecipePage.js'
 
 class App extends Component {
   render () {
     return (
       <BrowserRouter>
-        <Container fluid>
+        <Container>
           <Switch>
             {/* <Route exact path='/' render={() => (
               <div style={{height: '100vh', textAlign: 'center'}}>
@@ -34,8 +35,8 @@ class App extends Component {
             <Route exact path='/recipes/new' render={props => (
               <CreateRecipe {...props} />
             )} />
-            <Route path='/recipes/:id' render={() => (
-              <div>One recipe</div>
+            <Route path='/recipes/:id' render={props => (
+              <RecipePage {...props} />
             )} />
           </Switch>
         </Container>
