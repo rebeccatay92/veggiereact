@@ -48,7 +48,7 @@ class RecipeList extends Component {
             {recipes.map((recipe, i) => {
               return (
                 <Col sm='12' md='6' key={i}>
-                  <div style={{borderRadius: '5px', boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '350px', marginBottom: '24px', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)}>
+                  <div style={{borderRadius: '5px', boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '450px', marginBottom: '24px', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)}>
                     <img className='img-fluid' src={recipe.coverPhotoUrl} alt='recipe photo' style={{width: '100%', height: '80%', maxHeight: '80%', objectFit: 'cover'}} />
                     <div style={{width: '100%', height: '20%', maxHeight: '20%'}}>
                       <h5>{recipe.title}</h5>
