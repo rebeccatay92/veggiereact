@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Row, Col, Form, FormGroup, Label, Input, ButtonGroup, Button } from 'reactstrap'
+import { AvForm, AvGroup, AvField, AvInput, AvFeedback } from 'availity-reactstrap-validation'
 
 class CreateRecipe extends Component {
   constructor (props) {
@@ -8,14 +9,14 @@ class CreateRecipe extends Component {
       recipeTitle: '',
       servings: '',
       time: '',
-      vegCategory: '',
+      vegCategory: 'Vegan',
       coverPhotoUrl: '',
       ingredients: [{name: '', amount: ''}],
       groups: [
-        {
-          groupHeading: 'Test group',
-          groupedItems: [{name: 'testing', amount: '12'}]
-        }
+        // {
+        //   groupHeading: 'Test group',
+        //   groupedItems: [{name: 'testing', amount: '12'}]
+        // }
       ],
       instructions: ['']
     }
@@ -207,6 +208,53 @@ class CreateRecipe extends Component {
     })
   }
 
+  uploadCoverPhoto (e) {
+    let files = e.target.files
+    // FileList is not an Array. Make it an array in es6.
+    let filesArr = Array.from(files)
+
+    let coverPhotoFile = filesArr[0]
+
+    let endpoint = `https://api.cloudinary.com/v1_1/rebeccatay92/auto/upload`
+
+    let fd = new FormData()
+    fd.append('upload_preset', 'hmctu9xo')
+    fd.append('file', coverPhotoFile)
+
+    window.fetch(endpoint, {
+      method: 'POST',
+      body: fd
+    })
+      .then(res => {
+        console.log('res', res)
+        return res.json()
+      })
+      .then(json => {
+        console.log('json', json)
+        this.setState({
+          coverPhotoUrl: json.url
+        })
+      })
+  }
+
+  createNewRecipe () {
+    console.log('valid recipe', this.state)
+
+    window.fetch('http://localhost:3001/recipes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: 'seededuser',
+        recipe: this.state
+      })
+    })
+      .then(res => {
+        console.log('res', res)
+      })
+  }
+
   render () {
     return (
       <Row style={{minHeight: '100vh'}}>
@@ -219,20 +267,23 @@ class CreateRecipe extends Component {
 
           <Row noGutters>
             <Col sm='12'>
-              <Form>
-                <FormGroup>
+              <AvForm onValidSubmit={() => this.createNewRecipe()} onInvalidSubmit={() => console.log('invalid')}>
+                <AvGroup>
                   <Label for='recipeTitle'>Title</Label>
-                  <Input id='recipeTitle' placeholder="Your recipe's title" value={this.state.recipeTitle} onChange={e => this.handleChange(e, 'recipeTitle')} />
-                </FormGroup>
+                  <AvInput id='recipeTitle' placeholder="Your recipe's title" name='recipeTitle' value={this.state.recipeTitle} onChange={e => this.handleChange(e, 'recipeTitle')} required />
+                  <AvFeedback>Your recipe needs a title</AvFeedback>
+                </AvGroup>
                 <Row>
-                  <FormGroup className='col-6'>
+                  <AvGroup className='col-6'>
                     <Label for='servings'>Servings</Label>
-                    <Input id='servings' placeholder='No. of servings' value={this.state.servings} onChange={e => this.handleChange(e, 'servings')} />
-                  </FormGroup>
-                  <FormGroup className='col-6'>
+                    <AvInput required id='servings' name='servings' placeholder='No. of servings' value={this.state.servings} onChange={e => this.handleChange(e, 'servings')} />
+                    <AvFeedback>Required</AvFeedback>
+                  </AvGroup>
+                  <AvGroup className='col-6'>
                     <Label for='time'>Time needed</Label>
-                    <Input id='time' value={this.state.time} onChange={e => this.handleChange(e, 'time')} />
-                  </FormGroup>
+                    <AvInput required id='time' name='time' value={this.state.time} onChange={e => this.handleChange(e, 'time')} />
+                    <AvFeedback>Required</AvFeedback>
+                  </AvGroup>
                 </Row>
 
                 <ButtonGroup size='lg' style={{marginBottom: '1rem'}} className='d-flex'>
@@ -240,24 +291,29 @@ class CreateRecipe extends Component {
                   <Button outline color='success' active={this.state.vegCategory === 'Vegetarian'} style={{flex: 1}} onClick={() => this.setState({vegCategory: 'Vegetarian'})}>Vegetarian</Button>
                 </ButtonGroup>
 
-                <FormGroup>
+                <AvGroup>
                   <Label for='coverPhoto'>Upload a cover photo</Label>
-                  <Input id='coverPhoto' type='file' />
-                </FormGroup>
+                  <AvInput id='coverPhoto' name='coverPhotoUrl' type='file' onChange={e => this.uploadCoverPhoto(e)} accept='.jpg, .jpeg, .png' required />
+                  <AvFeedback>You need a photo for your recipe</AvFeedback>
+                </AvGroup>
 
+                <div style={{width: '100%', height: '350px'}}>
+                  <img className='img-fluid' alt='coverphoto' src={this.state.coverPhotoUrl || 'http://via.placeholder.com/540x350'} style={{width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
+                </div>
                 <hr />
 
                 <h3>Ingredients needed</h3>
                 {this.state.ingredients.map((row, i) => {
                   return (
                     <Row key={i}>
-                      <FormGroup className='col-7'>
-                        <Label for='ingredient'>Ingredient</Label>
-                        <Input id='ingredient' value={row.name} onChange={e => this.handleIndivIngredientChange(e, i, 'name')} />
-                      </FormGroup>
+                      <AvGroup className='col-7'>
+                        <Label for={`ingredient${i}`}>Ingredient</Label>
+                        <AvInput id={`ingredient${i}`} name={`ingredient${i}`} value={row.name} onChange={e => this.handleIndivIngredientChange(e, i, 'name')} required />
+                        <AvFeedback>Required</AvFeedback>
+                      </AvGroup>
                       <FormGroup className='col-4'>
-                        <Label for='amount'>Amount</Label>
-                        <Input id='amount' value={row.amount} onChange={e => this.handleIndivIngredientChange(e, i, 'amount')} />
+                        <Label for={`ingredient${i}amount`}>Amount</Label>
+                        <Input id={`ingredient${i}amount`} value={row.amount} onChange={e => this.handleIndivIngredientChange(e, i, 'amount')} />
                       </FormGroup>
                       <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
                         <Button color='primary' size='md' onClick={() => this.removeIndivIngredient(i)}>X</Button>
@@ -273,20 +329,22 @@ class CreateRecipe extends Component {
                 {this.state.groups.map((group, groupIndex) => {
                   return (
                     <div key={groupIndex} style={{background: 'rgb(245, 245, 245)', boxShadow: '2px 2px 10px rgb(210, 210, 210)', margin: '24px 0', padding: '12px'}}>
-                      <FormGroup>
-                        <Label for={`group${groupIndex}Heading`}>Group Heading</Label>
-                        <Input id={`group${groupIndex}Heading`} value={group.groupHeading} onChange={e => this.handleGrpHeadingChange(e, groupIndex)} />
-                      </FormGroup>
+                      <AvGroup>
+                        <Label for={`groupHeading${groupIndex}`}>Group Heading</Label>
+                        <AvInput name={`groupHeading${groupIndex}`} id={`groupHeading${groupIndex}`} value={group.groupHeading} onChange={e => this.handleGrpHeadingChange(e, groupIndex)} required />
+                        <AvFeedback>Required</AvFeedback>
+                      </AvGroup>
                       {group.groupedItems.map((obj, ingredientIndex) => {
                         return (
                           <Row key={ingredientIndex}>
-                            <FormGroup className='col-7'>
-                              <Label for='ingredient'>Ingredient</Label>
-                              <Input id='ingredient' value={obj.name} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'name')} />
-                            </FormGroup>
+                            <AvGroup className='col-7'>
+                              <Label for={`group${groupIndex}ingredient${ingredientIndex}`}>Ingredient</Label>
+                              <AvInput id={`group${groupIndex}ingredient${ingredientIndex}`} value={obj.name} name={`group${groupIndex}ingredient${ingredientIndex}`} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'name')} required />
+                              <AvFeedback>Required</AvFeedback>
+                            </AvGroup>
                             <FormGroup className='col-4'>
-                              <Label for='amount'>Amount</Label>
-                              <Input id='amount' value={obj.amount} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'amount')} />
+                              <Label for={`group${groupIndex}ingredient${ingredientIndex}amount`}>Amount</Label>
+                              <Input id={`group${groupIndex}ingredient${ingredientIndex}amount`} value={obj.amount} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'amount')} />
                             </FormGroup>
                             <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
                               <Button color='primary' size='md' onClick={() => this.removeGrpIngredient(groupIndex, ingredientIndex)}>X</Button>
@@ -306,10 +364,11 @@ class CreateRecipe extends Component {
                 {this.state.instructions.map((step, i) => {
                   return (
                     <Row key={i}>
-                      <FormGroup className='col-11'>
-                        <Label for='step'>Step {i + 1}</Label>
-                        <Input id='step' type='textarea' value={step} onChange={e => this.handleStepChange(e, i)} />
-                      </FormGroup>
+                      <AvGroup className='col-11'>
+                        <Label for={`step${i}`}>Step {i + 1}</Label>
+                        <AvInput id={`step${i}`} name={`step${i}`}  type='textarea' value={step} onChange={e => this.handleStepChange(e, i)} required />
+                        <AvFeedback>Required</AvFeedback>
+                      </AvGroup>
                       <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
                         <Button color='primary' size='md' onClick={() => this.removeStep(i)}>X</Button>
                       </div>
@@ -317,7 +376,9 @@ class CreateRecipe extends Component {
                   )
                 })}
                 <Button block outline color='primary' style={{marginTop: '1rem'}} onClick={() => this.addStep()}>Add a step</Button>
-              </Form>
+
+                <Button block size='lg' color='success' style={{marginTop: '3rem', marginBottom: '6rem'}}>Submit this recipe</Button>
+              </AvForm>
             </Col>
           </Row>
         </Col>
