@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
 
 import { Container, Row, Col, Jumbotron, Button, Navbar } from 'reactstrap'
 import RecipeList from './RecipeList.js'
-import CreateRecipe from './CreateRecipe.js'
+import RecipeForm from './RecipeForm.js'
 import RecipePage from './RecipePage.js'
 
 class App extends Component {
@@ -32,9 +32,15 @@ class App extends Component {
             <Route exact path='/recipes' render={props => (
               <RecipeList {...props} />
             )} />
+
             <Route exact path='/recipes/new' render={props => (
-              <CreateRecipe {...props} />
+              <RecipeForm {...props} action='create' />
             )} />
+
+            <Route path='/recipes/:id/edit' render={props => (
+              <RecipeForm {...props} action='edit' />
+            )} />
+
             <Route path='/recipes/:id' render={props => (
               <RecipePage {...props} />
             )} />

@@ -3,7 +3,7 @@ import { Row, Col, Form, FormGroup, Label, Input, ButtonGroup, Button } from 're
 import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation'
 import { Link } from 'react-router-dom'
 
-class CreateRecipe extends Component {
+class RecipeForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -238,29 +238,74 @@ class CreateRecipe extends Component {
       })
   }
 
-  createNewRecipe () {
+  onSubmitAction (crudAction) {
     console.log('valid recipe', this.state)
+    if (crudAction === 'create') {
+      window.fetch('http://localhost:3001/recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: 'seededuser',
+          recipe: this.state
+        })
+      })
+        .then(res => {
+          return res.json()
+        })
+        .then(json => {
+          console.log('json', json)
+          this.props.history.push('/recipes')
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
+    } else if (crudAction === 'edit') {
+      window.fetch(`http://localhost:3001/recipes/${this.props.match.params.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          recipe: this.state
+        })
+      })
+        .then(res => {
+          return res.json()
+        })
+        .then(json => {
+          console.log('json', json)
+          this.props.history.push('/recipes')
+        })
+        .catch(err => {
+          console.log('err', err)
+        })
+    }
+  }
 
-    window.fetch('http://localhost:3001/recipes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userId: 'seededuser',
-        recipe: this.state
-      })
-    })
-      .then(res => {
-        return res.json()
-      })
-      .then(json => {
-        console.log('json', json)
-        this.props.history.push('/recipes')
-      })
-      .catch(err => {
-        console.log('err', err)
-      })
+  componentDidMount () {
+    if (this.props.action === 'edit') {
+      let recipeId = this.props.match.params.id
+
+      window.fetch(`http://localhost:3001/recipes/${recipeId}`)
+        .then(res => {
+          return res.json()
+        })
+        .then(recipe => {
+          console.log('recipe', recipe)
+          this.setState({
+            recipeTitle: recipe.recipeTitle,
+            servings: recipe.servings,
+            time: recipe.time,
+            vegCategory: recipe.vegCategory,
+            coverPhotoUrl: recipe.coverPhotoUrl,
+            ingredients: recipe.ingredients || [],
+            groups: recipe.groups || [],
+            instructions: recipe.instructions
+          })
+        })
+    }
   }
 
   render () {
@@ -269,13 +314,18 @@ class CreateRecipe extends Component {
         <Col md='12' lg={{size: 6, offset: 3}}>
 
           <div style={{margin: '24px 0'}}>
-            <h1>Create a recipe</h1>
+            {this.props.action === 'create' &&
+              <h1>Create a recipe</h1>
+            }
+            {this.props.action === 'edit' &&
+              <h1>Update your recipe</h1>
+            }
             <h4>Share your recipe with the community</h4>
           </div>
 
           <Row noGutters>
             <Col sm='12'>
-              <AvForm onValidSubmit={() => this.createNewRecipe()} onInvalidSubmit={() => console.log('invalid')}>
+              <AvForm onValidSubmit={() => this.onSubmitAction(this.props.action)} onInvalidSubmit={() => console.log('invalid')}>
                 <AvGroup>
                   <Label for='recipeTitle'>Title</Label>
                   <AvInput id='recipeTitle' placeholder="Your recipe's title" name='recipeTitle' value={this.state.recipeTitle} onChange={e => this.handleChange(e, 'recipeTitle')} required />
@@ -301,7 +351,7 @@ class CreateRecipe extends Component {
 
                 <AvGroup>
                   <Label for='coverPhoto'>Upload a cover photo</Label>
-                  <AvInput id='coverPhoto' name='coverPhotoUrl' type='file' onChange={e => this.uploadCoverPhoto(e)} accept='.jpg, .jpeg, .png' required />
+                  <AvInput id='coverPhoto' name='coverPhotoUrl' type='file' onChange={e => this.uploadCoverPhoto(e)} accept='.jpg, .jpeg, .png' required={this.props.action === 'create'} />
                   <AvFeedback>You need a photo for your recipe</AvFeedback>
                 </AvGroup>
 
@@ -374,7 +424,7 @@ class CreateRecipe extends Component {
                     <Row key={i}>
                       <AvGroup className='col-11'>
                         <Label for={`step${i}`}>Step {i + 1}</Label>
-                        <AvInput id={`step${i}`} name={`step${i}`}  type='textarea' value={step} onChange={e => this.handleStepChange(e, i)} required />
+                        <AvInput id={`step${i}`} name={`step${i}`} type='textarea' rows='3' value={step} onChange={e => this.handleStepChange(e, i)} required />
                         <AvFeedback>Required</AvFeedback>
                       </AvGroup>
                       <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
@@ -385,7 +435,12 @@ class CreateRecipe extends Component {
                 })}
                 <Button block outline color='primary' style={{marginTop: '1rem'}} onClick={() => this.addStep()}>Add a step</Button>
 
-                <Button block size='lg' color='success' style={{margin: '3rem 0'}}>Submit this recipe</Button>
+                {this.props.action === 'create' &&
+                  <Button block size='lg' color='success' style={{margin: '2rem 0'}}>Submit this recipe</Button>
+                }
+                {this.props.action === 'edit' &&
+                  <Button block size='lg' color='success' style={{margin: '2rem 0'}}>Save changes</Button>
+                }
               </AvForm>
 
               <Link to='/recipes'>
@@ -399,4 +454,4 @@ class CreateRecipe extends Component {
   }
 }
 
-export default CreateRecipe
+export default RecipeForm

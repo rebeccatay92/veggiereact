@@ -12,9 +12,12 @@ class RecipePage extends Component {
   }
 
   componentDidMount () {
-    let endpoint = this.props.location.pathname
 
-    window.fetch(`http://localhost:3001${endpoint}`)
+    console.log('props', this.props.match)
+
+    let recipeId = this.props.match.params.id
+
+    window.fetch(`http://localhost:3001/recipes/${recipeId}`)
       .then(res => {
         return res.json()
       })
