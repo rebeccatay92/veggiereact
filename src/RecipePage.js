@@ -12,12 +12,9 @@ class RecipePage extends Component {
   }
 
   componentDidMount () {
-
-    console.log('props', this.props.match)
-
     let recipeId = this.props.match.params.id
 
-    window.fetch(`http://localhost:3001/recipes/${recipeId}`)
+    window.fetch(`https://veggiebackend.herokuapp.com/recipes/${recipeId}`)
       .then(res => {
         return res.json()
       })

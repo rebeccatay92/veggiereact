@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Row, Col, ButtonGroup, Button } from 'reactstrap'
+import RecipeCard from './RecipeCard'
 
 class RecipeList extends Component {
   constructor (props) {
@@ -12,7 +13,7 @@ class RecipeList extends Component {
   }
 
   componentDidMount () {
-    window.fetch('http://localhost:3001/recipes')
+    window.fetch(`https://veggiebackend.herokuapp.com/recipes`)
       .then(res => {
         return res.json()
       })
@@ -25,14 +26,14 @@ class RecipeList extends Component {
   }
 
   deleteRecipe (recipeId) {
-    window.fetch(`http://localhost:3001/recipes/${recipeId}`, {
+    window.fetch(`https://veggiebackend.herokuapp.com/recipes/${recipeId}`, {
       method: 'DELETE'
     })
       .then(res => {
         return res.json()
       })
       .then(json => {
-        console.log('json')
+        // console.log('json')
         window.location.reload()
       })
       .catch(err => {
@@ -45,7 +46,7 @@ class RecipeList extends Component {
   }
 
   resetDatabase () {
-    window.fetch('http://localhost:3001/reseed')
+    window.fetch(`https://veggiebackend.herokuapp.com/reseed`)
       .then(res => {
         window.location.reload()
       })
@@ -70,21 +71,7 @@ class RecipeList extends Component {
           <Row>
             {recipes.map((recipe, i) => {
               return (
-                <Col sm='12' md='6' lg='4' key={i}>
-                  <div style={{boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '450px', marginBottom: '2rem'}}>
-                    <img className='img-fluid' src={recipe.coverPhotoUrl} alt='recipe photo' style={{width: '100%', height: '75%', maxHeight: '80%', objectFit: 'cover', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)} />
-                    <div style={{width: '100%', height: '25%', maxHeight: '25%', padding: '0.5rem'}}>
-                      <h5 style={{fontFamily: 'Average, sans-serif'}}>{recipe.recipeTitle}</h5>
-                      <h5 style={{fontFamily: 'Average, sans-serif', color: '#3bbf2f'}}>{recipe.vegCategory}</h5>
-                      <ButtonGroup>
-                        <Link to={`/recipes/${recipe._id}/edit`}>
-                          <Button outline color='primary'>Edit</Button>
-                        </Link>
-                        <Button outline color='danger' onClick={() => this.deleteRecipe(recipe._id)}>Delete</Button>
-                      </ButtonGroup>
-                    </div>
-                  </div>
-                </Col>
+                <RecipeCard key={`recipeCard${i}`} coverPhotoUrl={recipe.coverPhotoUrl} recipeTitle={recipe.recipeTitle} vegCategory={recipe.vegCategory} recipeId={recipe._id} redirectToRecipe={() => this.redirectToRecipe(recipe._id)} deleteRecipe={() => this.deleteRecipe(recipe._id)} />
               )
             })}
           </Row>

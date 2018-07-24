@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
 
 import { Container, Row, Col, Jumbotron, Button, Navbar } from 'reactstrap'
+
+import EntryPoint from './EntryPoint.js'
 import RecipeList from './RecipeList.js'
 import RecipeForm from './RecipeForm.js'
 import RecipePage from './RecipePage.js'
@@ -12,23 +14,9 @@ class App extends Component {
       <BrowserRouter>
         <Container>
           <Switch>
-            {/* <Route exact path='/' render={() => (
-              <div style={{height: '100vh', textAlign: 'center'}}>
-                <Row className='mx-auto'>
-                  <Col sm='12' md={{size: 8, offset: 2}}>
-                    <Jumbotron>
-                      <h1>Assignment</h1>
-                      <p>Assumptions are</p>
-                      <Link to='/recipes'>
-                        <Button color='primary' size='lg'>
-                        Proceed
-                        </Button>
-                      </Link>
-                    </Jumbotron>
-                  </Col>
-                </Row>
-              </div>
-            )} /> */}
+            <Route exact path='/' render={() => (
+              <EntryPoint />
+            )} />
             <Route exact path='/recipes' render={props => (
               <RecipeList {...props} />
             )} />

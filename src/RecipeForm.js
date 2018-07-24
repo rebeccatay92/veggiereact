@@ -216,7 +216,7 @@ class RecipeForm extends Component {
 
     let coverPhotoFile = filesArr[0]
 
-    let endpoint = `https://api.cloudinary.com/v1_1/rebeccatay92/auto/upload`
+    let endpoint = 'https://api.cloudinary.com/v1_1/rebeccatay92/auto/upload'
 
     let fd = new FormData()
     fd.append('upload_preset', 'hmctu9xo')
@@ -227,11 +227,9 @@ class RecipeForm extends Component {
       body: fd
     })
       .then(res => {
-        // console.log('res', res)
         return res.json()
       })
       .then(json => {
-        // console.log('json', json)
         this.setState({
           coverPhotoUrl: json.url
         })
@@ -241,7 +239,7 @@ class RecipeForm extends Component {
   onSubmitAction (crudAction) {
     console.log('valid recipe', this.state)
     if (crudAction === 'create') {
-      window.fetch('http://localhost:3001/recipes', {
+      window.fetch(`https://veggiebackend.herokuapp.com/recipes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -255,14 +253,13 @@ class RecipeForm extends Component {
           return res.json()
         })
         .then(json => {
-          console.log('json', json)
           this.props.history.push('/recipes')
         })
         .catch(err => {
           console.log('err', err)
         })
     } else if (crudAction === 'edit') {
-      window.fetch(`http://localhost:3001/recipes/${this.props.match.params.id}`, {
+      window.fetch(`https://veggiebackend.herokuapp.com/recipes/${this.props.match.params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -275,7 +272,6 @@ class RecipeForm extends Component {
           return res.json()
         })
         .then(json => {
-          console.log('json', json)
           this.props.history.push('/recipes')
         })
         .catch(err => {
@@ -288,12 +284,11 @@ class RecipeForm extends Component {
     if (this.props.action === 'edit') {
       let recipeId = this.props.match.params.id
 
-      window.fetch(`http://localhost:3001/recipes/${recipeId}`)
+      window.fetch(`https://veggiebackend.herokuapp.com/recipes/${recipeId}`)
         .then(res => {
           return res.json()
         })
         .then(recipe => {
-          console.log('recipe', recipe)
           this.setState({
             recipeTitle: recipe.recipeTitle,
             servings: recipe.servings,
