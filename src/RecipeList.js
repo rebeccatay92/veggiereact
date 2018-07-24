@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { Row, Col, Card, CardImg, CardBody, CardTitle, CardText, Button } from 'reactstrap'
+import { Row, Col, Button } from 'reactstrap'
 
 class RecipeList extends Component {
   constructor (props) {
@@ -47,11 +47,12 @@ class RecipeList extends Component {
           <Row>
             {recipes.map((recipe, i) => {
               return (
-                <Col sm='12' md='6' key={i}>
-                  <div style={{borderRadius: '5px', boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '450px', marginBottom: '24px', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)}>
-                    <img className='img-fluid' src={recipe.coverPhotoUrl} alt='recipe photo' style={{width: '100%', height: '80%', maxHeight: '80%', objectFit: 'cover'}} />
-                    <div style={{width: '100%', height: '20%', maxHeight: '20%'}}>
-                      <h5>{recipe.title}</h5>
+                <Col sm='12' md='6' lg='4' key={i}>
+                  <div style={{boxShadow: '2px 2px 10px rgb(210, 210, 210)', width: '100%', height: '450px', marginBottom: '2rem', cursor: 'pointer'}} onClick={() => this.redirectToRecipe(recipe._id)}>
+                    <img className='img-fluid' src={recipe.coverPhotoUrl} alt='recipe photo' style={{width: '100%', height: '75%', maxHeight: '80%', objectFit: 'cover'}} />
+                    <div style={{width: '100%', height: '25%', maxHeight: '25%', padding: '0.5rem'}}>
+                      <h5 style={{fontFamily: 'Average, sans-serif'}}>{recipe.recipeTitle}</h5>
+                      <h5 style={{fontFamily: 'Average, sans-serif', color: '#3bbf2f'}}>{recipe.vegCategory}</h5>
                     </div>
                   </div>
                 </Col>

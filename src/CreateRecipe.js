@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Row, Col, Form, FormGroup, Label, Input, ButtonGroup, Button } from 'reactstrap'
-import { AvForm, AvGroup, AvField, AvInput, AvFeedback } from 'availity-reactstrap-validation'
+import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation'
+import { Link } from 'react-router-dom'
 
 class CreateRecipe extends Component {
   constructor (props) {
@@ -226,11 +227,11 @@ class CreateRecipe extends Component {
       body: fd
     })
       .then(res => {
-        console.log('res', res)
+        // console.log('res', res)
         return res.json()
       })
       .then(json => {
-        console.log('json', json)
+        // console.log('json', json)
         this.setState({
           coverPhotoUrl: json.url
         })
@@ -251,7 +252,14 @@ class CreateRecipe extends Component {
       })
     })
       .then(res => {
-        console.log('res', res)
+        return res.json()
+      })
+      .then(json => {
+        console.log('json', json)
+        this.props.history.push('/recipes')
+      })
+      .catch(err => {
+        console.log('err', err)
       })
   }
 
@@ -377,8 +385,12 @@ class CreateRecipe extends Component {
                 })}
                 <Button block outline color='primary' style={{marginTop: '1rem'}} onClick={() => this.addStep()}>Add a step</Button>
 
-                <Button block size='lg' color='success' style={{marginTop: '3rem', marginBottom: '6rem'}}>Submit this recipe</Button>
+                <Button block size='lg' color='success' style={{margin: '3rem 0'}}>Submit this recipe</Button>
               </AvForm>
+
+              <Link to='/recipes'>
+                <Button block size='lg' color='danger' style={{marginBottom: '6rem'}}>Cancel and return to Recipes</Button>
+              </Link>
             </Col>
           </Row>
         </Col>
