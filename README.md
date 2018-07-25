@@ -9,3 +9,6 @@
 * Ingredients should be groupable, and exist as a combination of two fields --- name and amount.
 
 * Instructions should be divided into steps.
+
+Frontend hosted @ https://veggiereact.herokuapp.com/
+Backend repo @ https://github.com/rebeccatay92/veggiebackend
