@@ -3,6 +3,7 @@ import { Row, Col, Form, FormGroup, Label, Input, ButtonGroup, Button } from 're
 import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation'
 import { Link } from 'react-router-dom'
 
+import RecipeFormCoverPhoto from './RecipeFormCoverPhoto'
 import RecipeFormInstructionRow from './RecipeFormInstructionRow'
 import RecipeFormIngredientRow from './RecipeFormIngredientRow'
 
@@ -324,11 +325,13 @@ class RecipeForm extends Component {
           <Row noGutters>
             <Col sm='12'>
               <AvForm onValidSubmit={() => this.onSubmitAction(this.props.action)} onInvalidSubmit={() => console.log('invalid')}>
+
                 <AvGroup>
                   <Label for='recipeTitle'>Title</Label>
                   <AvInput id='recipeTitle' placeholder="Your recipe's title" name='recipeTitle' value={this.state.recipeTitle} onChange={e => this.handleChange(e, 'recipeTitle')} required />
                   <AvFeedback>Your recipe needs a title</AvFeedback>
                 </AvGroup>
+
                 <Row>
                   <AvGroup className='col-6'>
                     <Label for='servings'>Servings</Label>
@@ -347,15 +350,8 @@ class RecipeForm extends Component {
                   <Button outline color='success' active={this.state.vegCategory === 'Vegetarian'} style={{flex: 1}} onClick={() => this.setState({vegCategory: 'Vegetarian'})}>Vegetarian</Button>
                 </ButtonGroup>
 
-                <AvGroup>
-                  <Label for='coverPhoto'>Upload a cover photo</Label>
-                  <AvInput id='coverPhoto' name='coverPhotoUrl' type='file' onChange={e => this.uploadCoverPhoto(e)} accept='.jpg, .jpeg, .png' required={this.props.action === 'create'} />
-                  <AvFeedback>You need a photo for your recipe</AvFeedback>
-                </AvGroup>
+                <RecipeFormCoverPhoto coverPhotoUrl={this.state.coverPhotoUrl} formAction={this.props.action} uploadCoverPhoto={e => this.uploadCoverPhoto(e)} />
 
-                <div style={{width: '100%', height: '350px'}}>
-                  <img className='img-fluid' alt='coverphoto' src={this.state.coverPhotoUrl || 'http://via.placeholder.com/540x350'} style={{width: '100%', height: '100%', maxWidth: '100%', maxHeight: '100%', objectFit: 'cover'}} />
-                </div>
                 <hr />
 
                 <h3>Ingredients needed</h3>
