@@ -3,6 +3,9 @@ import { Row, Col, Form, FormGroup, Label, Input, ButtonGroup, Button } from 're
 import { AvForm, AvGroup, AvInput, AvFeedback } from 'availity-reactstrap-validation'
 import { Link } from 'react-router-dom'
 
+import RecipeFormInstructionRow from './RecipeFormInstructionRow'
+import RecipeFormIngredientRow from './RecipeFormIngredientRow'
+
 class RecipeForm extends Component {
   constructor (props) {
     super(props)
@@ -358,20 +361,7 @@ class RecipeForm extends Component {
                 <h3>Ingredients needed</h3>
                 {this.state.ingredients.map((row, i) => {
                   return (
-                    <Row key={i}>
-                      <AvGroup className='col-7'>
-                        <Label for={`ingredient${i}`}>Ingredient</Label>
-                        <AvInput id={`ingredient${i}`} name={`ingredient${i}`} value={row.name} onChange={e => this.handleIndivIngredientChange(e, i, 'name')} required />
-                        <AvFeedback>Required</AvFeedback>
-                      </AvGroup>
-                      <FormGroup className='col-4'>
-                        <Label for={`ingredient${i}amount`}>Amount</Label>
-                        <Input id={`ingredient${i}amount`} value={row.amount} onChange={e => this.handleIndivIngredientChange(e, i, 'amount')} />
-                      </FormGroup>
-                      <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
-                        <Button color='primary' size='md' onClick={() => this.removeIndivIngredient(i)}>X</Button>
-                      </div>
-                    </Row>
+                    <RecipeFormIngredientRow key={`indivIngredient${i}`} name={row.name} amount={row.amount} ingredientIndex={i} groupIndex={'indiv'} handleIngredientChange={(e, ingredientIndex, field) => this.handleIndivIngredientChange(e, ingredientIndex, field)} removeIngredient={() => this.removeIndivIngredient(i)} />
                   )
                 })}
 
@@ -387,22 +377,9 @@ class RecipeForm extends Component {
                         <AvInput name={`groupHeading${groupIndex}`} id={`groupHeading${groupIndex}`} value={group.groupHeading} onChange={e => this.handleGrpHeadingChange(e, groupIndex)} required />
                         <AvFeedback>Required</AvFeedback>
                       </AvGroup>
-                      {group.groupedItems.map((obj, ingredientIndex) => {
+                      {group.groupedItems.map((row, i) => {
                         return (
-                          <Row key={ingredientIndex}>
-                            <AvGroup className='col-7'>
-                              <Label for={`group${groupIndex}ingredient${ingredientIndex}`}>Ingredient</Label>
-                              <AvInput id={`group${groupIndex}ingredient${ingredientIndex}`} value={obj.name} name={`group${groupIndex}ingredient${ingredientIndex}`} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'name')} required />
-                              <AvFeedback>Required</AvFeedback>
-                            </AvGroup>
-                            <FormGroup className='col-4'>
-                              <Label for={`group${groupIndex}ingredient${ingredientIndex}amount`}>Amount</Label>
-                              <Input id={`group${groupIndex}ingredient${ingredientIndex}amount`} value={obj.amount} onChange={e => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, 'amount')} />
-                            </FormGroup>
-                            <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
-                              <Button color='primary' size='md' onClick={() => this.removeGrpIngredient(groupIndex, ingredientIndex)}>X</Button>
-                            </div>
-                          </Row>
+                          <RecipeFormIngredientRow key={`grpIngredient${i}`} name={row.name} amount={row.amount} ingredientIndex={i} groupIndex={groupIndex} handleIngredientChange={(e, ingredientIndex, field) => this.handleGrpIngredientChange(e, groupIndex, ingredientIndex, field)} removeIngredient={() => this.removeGrpIngredient(groupIndex, i)} />
                         )
                       })}
                       <Button block outline color='primary' style={{marginTop: '1rem'}} onClick={() => this.addGrpIngredient(groupIndex)}>Add new row</Button>
@@ -414,20 +391,12 @@ class RecipeForm extends Component {
                 <hr />
 
                 <h3>Instructions</h3>
-                {this.state.instructions.map((step, i) => {
+                {this.state.instructions.map((step, index) => {
                   return (
-                    <Row key={i}>
-                      <AvGroup className='col-11'>
-                        <Label for={`step${i}`}>Step {i + 1}</Label>
-                        <AvInput id={`step${i}`} name={`step${i}`} type='textarea' rows='3' value={step} onChange={e => this.handleStepChange(e, i)} required />
-                        <AvFeedback>Required</AvFeedback>
-                      </AvGroup>
-                      <div className='col-1 d-flex justify-content-end align-items-end' style={{marginBottom: '1rem'}}>
-                        <Button color='primary' size='md' onClick={() => this.removeStep(i)}>X</Button>
-                      </div>
-                    </Row>
+                    <RecipeFormInstructionRow key={`step${index}`} step={step} index={index} handleStepChange={e => this.handleStepChange(e, index)} removeStep={() => this.removeStep(index)} />
                   )
                 })}
+
                 <Button block outline color='primary' style={{marginTop: '1rem'}} onClick={() => this.addStep()}>Add a step</Button>
 
                 {this.props.action === 'create' &&
